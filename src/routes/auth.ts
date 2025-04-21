@@ -1,4 +1,4 @@
-import { Request, Response, Router } from 'express';
+import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { generateJWTToken } from '../utils/jwt';
 
@@ -11,12 +11,12 @@ interface LoginRequestDto {
 
 const users = [{ id: 1, email: 'test@example.com', passwordHash: bcrypt.hashSync('password123', 8) }];
 
-router.post('/login', (req: any, res: any) => {
+router.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body as LoginRequestDto;
 
   if (!email || !password) {
     return res.status(400).json({
-      message: 'Invalid invalid request body',
+      message: 'Invalid request body',
     });
   }
 
@@ -29,7 +29,7 @@ router.post('/login', (req: any, res: any) => {
   }
 
   const token = generateJWTToken({ id: String(user.id), email: user.email });
-  res.status(200).json({
+  return res.status(200).json({
     token,
   });
 });
